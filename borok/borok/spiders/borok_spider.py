@@ -1,24 +1,18 @@
 import scrapy
 
-class BorokSpider(scrapy.Spider):
-    name = "borok"
-
-    def start_requests(self):
-        urls = ['https://pannonbormivesceh.hu/hirek/']
-
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+class PannonSpider(scrapy.Spider):
+    name = 'pannon'
+    start_urls = ['https://pannonbormivesceh.hu/hirek/']
 
     def parse(self, response):
+        borok_div = response.css('div.raven-post')
 
-        for news in response.css('div.raven-post'):
-            yield\
-                {
-                'title' : news.css('a.raven-post-title-link::text').getall(),
-                'content' : news.css('div.raven-post-excerpt::text').getall(),
-                'image' : news.css('img::attr(src)').getall(),
+        for bor in borok_div:
+            yield{
+                'nev' : bor.css('a.raven-post-title-link::text').extract(),
+                'leiras' : bor.css('div.raven-post-excerpt::text').getall(),
+                'kep' : bor.css('img::attr(src)').getall()
             }
-
 
 
 
